@@ -1693,11 +1693,11 @@
 
 <script>
 export default {
-    name:'TypeNav',
+    name:'TypeNav'
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less" scoped>
     .type-nav {
         border-bottom: 2px solid #e1251b;
 
