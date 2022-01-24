@@ -5,12 +5,13 @@ import TypeNav from '@/pages/Home/TypeNav'
 // 注册全局组件TypeNav
 // Vue.component(【全局组件的名字】，【哪一个组件】)
 Vue.component(TypeNav.name,TypeNav)
-
-
 // 引入Vue-Router
 import VueRouter from 'vue-router'
 // 引入路由器
 import router from './router'
+// 测试
+import {reqCategoryList} from '@/api/index'
+reqCategoryList();
 
 
 Vue.config.productionTip = false
