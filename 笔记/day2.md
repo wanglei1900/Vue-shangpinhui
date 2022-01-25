@@ -127,29 +127,162 @@ done：进度条结束
 工作的时候，修改进度条的颜色，修改源码样式.bar类名的
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4)vuex:今晚务必vuex复习一下
+<!-- !9.vuex状态管理库 -->
 vuex:Vue官方提供的一个插件，插件可以管理项目共用数据。
 vuex：书写任何项目都需要vuex？
 项目大的时候，需要有一个地方‘统一管理数据’即为仓库store
+state
+mutations
+actions
+getters
+modules
+
 Vuex基本使用:
+state
+mutations
+actions
+getters
+
+## vuex仓库管理文件
+import Vue from "vue"
+<!-- !引入vuex -->
+import Vuex from 'vuex'
+<!-- !使用vuex -->
+Vue.use(Vuex)
+
+<!-- !state:仓库存储数据的地方 -->
+const state = {           
+    count:1
+}
+<!-- !actions:处理actions，可以书写业务逻辑，也可以处理异步操作 -->
+const actions = {
+    <!-- 这里可以书写业务逻辑,但是不能修改state -->
+    add(context, value){
+        <!-- console.log('actions中的add被调用', context ,value); -->
+        context.commit('ADD', value)
+    }
+}
+<!-- !mutations:修改state的唯一手段 -->
+const mutations = {
+    ADD(state,value){
+        <!-- console.log('mutations中的ADD被调用', state, value); -->
+        state.count ++
+    }
+}
+<!-- !getters:理解为计算属性，可以简化仓局数据，让组件获取仓库的数据更加方便 -->
+const getters = {}
+
+<!-- !创建并暴露vuex实例store -->
+export default new Vuex.Store({
+    state,
+    actions,
+    mutations,
+    getters
+})
+##
+## 入口文件引入并注册Vuex实例
+import Vue from 'vue'
+import App from './App.vue'
+<!-- 三级联动组件 + 全局组件，引入TypeNav -->
+import TypeNav from '@/pages/Home/TypeNav'
+<!-- 注册全局组件TypeNav -->
+<!-- Vue.component(【全局组件的名字】，【哪一个组件】) -->
+Vue.component(TypeNav.name,TypeNav)
+<!-- 引入Vue-Router -->
+import VueRouter from 'vue-router'
+<!-- 引入路由器 -->
+import router from './router'
+<!-- !引入Vuex实例仓库store -->
+import store from './store'
+<!-- 测试 -->
+import {reqCategoryList} from '@/api/index'
+reqCategoryList();
+
+
+Vue.config.productionTip = false
+<!-- 使用插件 -->
+Vue.use(VueRouter)
+
+new Vue({
+  render: h => h(App),
+  <!-- 注册路由，底下的写法KV一致省略V【router小写】 -->
+  <!-- 注册路由信息：当这里书写router的时候，组件身上都拥有 $route和$router属性 -->
+  <!-- !注册store，组件实例对象身上会多了一个$store属性 -->
+  store,
+  router:router
+}).$mount('#app')
+##
+## 组件中映射state并派发
+<!-- !引入mapstate -->
+import {mapState} from 'vuex'
+
+export default {
+  name:'',
+  components:{ListContainer, Recommend, Rank, Like, Floor, Brand},
+  computed:{
+    <!-- !映射仓库store数据到home组件 -->
+    ...mapState(['count'])
+  },
+  methods: {
+    add(){
+      <!-- !派发actions -->
+      this.$store.dispatch('add')
+    }
+  },
+}
+##
+
+Vuex实现模块式开发
+如果项目过大，组件过大，接口也很多，数据也很多，可以让Vuex实现模块开发
+模拟state存储数据
+{
+    home:{},
+    search:{}
+}
+
+## Vuex模块式开发
+<!-- !home模块的小store仓库 -->
+const state = {a:1}
+const actions = {}
+const mutations = {}
+const getters = {}
+export default {
+    state,
+    actions,
+    mutations,
+    getters
+}
+<!-- !search模块的小store仓库 -->
+const state = {b:2}
+const actions = {}
+const mutations = {}
+const getters = {}
+export default {
+    state,
+    actions,
+    mutations,
+    getters
+}
+
+
+<!-- vuex仓库管理文件 -->
+import Vue from "vue"
+<!-- 引入vuex -->
+import Vuex from 'vuex'
+<!-- 使用vuex -->
+Vue.use(Vuex)
+<!-- !引入小store仓库 home 和search -->
+import home from "./home"
+import search from "./search"
+
+<!-- 创建并暴露vuex实例store -->
+export default new Vuex.Store({
+    <!-- !实现vuex仓库模块式开发的存储数据 -->
+    modules:{
+        home,
+        search
+    }
+})
 
      
    
