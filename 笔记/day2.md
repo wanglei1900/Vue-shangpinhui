@@ -102,7 +102,7 @@ XMLHttpRequest、$、fetch、axios
 为什么需要进行二次封装axios
 请求拦截器、响应拦截器：请求拦截器，可以在发请求之前可以处理一些业务、响应拦截器当服务器数据返回以后，可以处理一些事情。
 
-在项目当中src目录下API文件夹【axios】,一般关于axios二次封装的文件
+★在项目当中src目录下API文件夹【axios】,一般关于axios二次封装的文件
 接口当中：路径都带有/api
 baseURL:"/api"
 

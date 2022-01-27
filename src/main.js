@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 // 三级联动组件 + 全局组件，引入TypeNav
-import TypeNav from '@/pages/Home/TypeNav'
+import TypeNav from '@/components/TypeNav'
 // 注册全局组件TypeNav
 // Vue.component(【全局组件的名字】，【哪一个组件】)
 Vue.component(TypeNav.name,TypeNav)
@@ -11,9 +11,6 @@ import VueRouter from 'vue-router'
 import router from './router'
 // 引入Vuex实例仓库store
 import store from './store'
-// 测试
-import {reqCategoryList} from '@/api/index'
-reqCategoryList();
 
 
 Vue.config.productionTip = false
