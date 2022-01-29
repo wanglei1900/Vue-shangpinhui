@@ -109,6 +109,22 @@ baseURL:"/api"
 如果axios基础不好，可以参考git|NPM关于axios文档
 
 跨域:如果多次请求协议、域名、端口号有不同的地方，称之为跨域
+## 使用代理服务器来解决跨域 webpack -配置- devserver -子功能- proxy
+<!-- !vue.config.js文件夹 -->
+module.exports = {
+    <!-- 关闭eslint -->
+    lintOnSave:false,
+    <!-- !代理跨域 -->
+    devServer: {
+        proxy: {
+          '/api': {
+            target: 'http://39.98.123.211',
+            // pathRewrite: { '^/api': '' },
+          },
+        },
+    },
+}
+##
 http://localhost:8080/#/home //前端项目本地服务器
 http://39.98.123.211    //后台服务器
 JSONP、CROS、代理

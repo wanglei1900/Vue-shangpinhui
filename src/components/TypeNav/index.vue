@@ -3,33 +3,35 @@
         <div class="container">
             <!-- 利用事件的委派|事件的委托 -->
             <div @mouseleave="resetIndex" >
-                <h2 class="all">全部商品分类</h2>
+                <h2 class="all" @mouseenter="enterShow">全部商品分类</h2>
                 <!-- 三级联动 -->
-                <div class="sort">
-                    <!-- 使用事件的委派+编程式导航 实现路由的跳转与传递参数 -->
-                    <div class="all-sort-list2" @click="goSearch">
-                        <div  class="item" v-for="(c1,index) in categorylist" :key="c1.categoryId" :class="{cor:currentIndex === index}">
-                            <h3  @mouseenter="changeIndex(index)">
-                                <a :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{c1.categoryName}}</a>
-                            </h3>
-                            <!-- 二级、三级分类 -->
-                            <div class="item-list clearfix" v-show="currentIndex==index">
-                                <div class="subitem">
-                                    <dl class="fore" v-for="(c2,index) in c1.categoryChild" :key="c2.categoryId">
-                                        <dt>
-                                            <a :data-categoryName="c2.categoryName" :data-category2Id="c2.categoryId">{{c2.categoryName}}</a>
-                                        </dt>
-                                        <dd>
-                                            <em  v-for="(c3,index) in c2.categoryChild" :key="c3.categoryId">
-                                                <a :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{c3.categoryName}}</a>
-                                            </em>
-                                        </dd>
-                                    </dl>
+                <transition name="sort">
+                    <div class="sort" v-show="show">
+                        <!-- 使用事件的委派+编程式导航 实现路由的跳转与传递参数 -->
+                        <div class="all-sort-list2" @click="goSearch">
+                            <div  class="item" v-for="(c1,index) in categorylist" :key="c1.categoryId" :class="{cor:currentIndex === index}">
+                                <h3  @mouseenter="changeIndex(index)">
+                                    <a :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{c1.categoryName}}</a>
+                                </h3>
+                                <!-- 二级、三级分类 -->
+                                <div class="item-list clearfix" v-show="currentIndex==index">
+                                    <div class="subitem">
+                                        <dl class="fore" v-for="(c2,index) in c1.categoryChild" :key="c2.categoryId">
+                                            <dt>
+                                                <a :data-categoryName="c2.categoryName" :data-category2Id="c2.categoryId">{{c2.categoryName}}</a>
+                                            </dt>
+                                            <dd>
+                                                <em  v-for="(c3,index) in c2.categoryChild" :key="c3.categoryId">
+                                                    <a :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{c3.categoryName}}</a>
+                                                </em>
+                                            </dd>
+                                        </dl>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </transition>
             </div>
             <nav class="nav">
                 <a href="###">服装城</a>
@@ -57,11 +59,12 @@ export default {
     data() {
         return {
             // 存储用户鼠标移到哪一个一级分类上的索引
-            currentIndex:-1
+            currentIndex:-1,
+            show:true
         }
     },
     computed: {
-        ...mapState('homeStore',['categorylist'])
+        ...mapState('homeStore',['categorylist']),
     },
     methods: {
         // 鼠标进入修改响应式数据currentIndex属性,es6写法且未加节流
@@ -85,6 +88,16 @@ export default {
         // 鼠标移除事件的回调
         resetIndex(){
             this.currentIndex = -1
+            //判断，仅仅在search组件中
+            if (this.$route.path !='/home') {
+                this.show = false
+            }
+        },
+        // 鼠标移入typeNav显示
+        enterShow(){
+            if (this.$route.path!='/home') {
+                this.show = true
+            }
         },
         // 进行路由跳转到 方法
         goSearch(event){
@@ -96,11 +109,11 @@ export default {
             // 第一个问题：在子节点当中a标签，我加上自定义属性data-categoryName，其余的子节点是没有的
             let element = event.target;
             // 获取到当前触发这个事件的节点【h3,a,dt,dl】，需要带有data-categoryname这个节点【一定是a标签】
-            // 节点有一个属性dataset属性，可以获取节点的自定义属性与属性值
+            //  htmlElement.dataset属性，可以获取元素的自定义属性与属性值（只读）
             let {categoryname,category1id,category2id,category3id} = element.dataset
             // 如果标签身上拥有categoryname一定是a标签
             if(categoryname){
-                // 整理路由跳转到参数,注意:编程式路由定义了name属性
+                // 整理路由跳转到参数,注意:编程式路由定义了name属性(或者用path:'')
                 let location = {name:'sousuo'}
                 let query = {categoryName:categoryname}
                 // 一级分类、二级分类、三级分类的a标签
@@ -113,16 +126,21 @@ export default {
                 }
                 // 整理完参数
                 location.query =query
-                console.log(query,location);
+                // console.log(query,location);
                 // 路由的跳转
                 this.$router.push(location)
             }
-        }
+        },
     },
     // 组件挂载完毕：可以向服务器发请求
     mounted() {
         // 通知vuex发送请求，获取数据，存储于仓库中
         this.$store.dispatch('homeStore/categoryList')
+        // 当组件挂载完毕，让show的属性变为false
+        // 如果不是Home路由组件，将typeNav进行隐藏.[这里要写route而不是router]
+        if (this.$route.path !='/home') {
+            this.show = false
+        }
     },
 }
 </script>
@@ -243,6 +261,19 @@ export default {
                     }
                 }
             }
+            // 过度动画的样式
+            // 过度动画的开始状态
+            .sort-enter{
+                height: 0px;
+            }
+            // 过度动画的结束状态
+            .sort-enter-to{
+                height: 461px;
+            }
+            // 定义动画的时间、速率
+            .sort-enter-active{
+                transition: all .5s linear;
+            }   
         }
     }
 </style>
