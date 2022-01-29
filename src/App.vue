@@ -1,7 +1,6 @@
 <template>
   <div>
     <Header/>
-    根组件
     <!-- 书写路由组件的出口的地方 -->
     <router-view></router-view>
     <!-- 在Home、Search显示的，在登录、注册隐藏 -->

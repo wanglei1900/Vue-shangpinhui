@@ -3,7 +3,34 @@
         <div class="container">
             <!-- 利用事件的委派|事件的委托 -->
             <div @mouseleave="resetIndex" >
-            <h2 class="all">全部商品分类</h2>
+                <h2 class="all">全部商品分类</h2>
+                <!-- 三级联动 -->
+                <div class="sort">
+                    <!-- 使用事件的委派+编程式导航 实现路由的跳转与传递参数 -->
+                    <div class="all-sort-list2" @click="goSearch">
+                        <div  class="item" v-for="(c1,index) in categorylist" :key="c1.categoryId" :class="{cor:currentIndex === index}">
+                            <h3  @mouseenter="changeIndex(index)">
+                                <a :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{c1.categoryName}}</a>
+                            </h3>
+                            <!-- 二级、三级分类 -->
+                            <div class="item-list clearfix" v-show="currentIndex==index">
+                                <div class="subitem">
+                                    <dl class="fore" v-for="(c2,index) in c1.categoryChild" :key="c2.categoryId">
+                                        <dt>
+                                            <a :data-categoryName="c2.categoryName" :data-category2Id="c2.categoryId">{{c2.categoryName}}</a>
+                                        </dt>
+                                        <dd>
+                                            <em  v-for="(c3,index) in c2.categoryChild" :key="c3.categoryId">
+                                                <a :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{c3.categoryName}}</a>
+                                            </em>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <nav class="nav">
                 <a href="###">服装城</a>
                 <a href="###">美妆馆</a>
@@ -14,36 +41,17 @@
                 <a href="###">有趣</a>
                 <a href="###">秒杀</a>
             </nav>
-            <div class="sort">
-                <div class="all-sort-list2">
-                    <div  class="item" v-for="(c1,index) in categorylist" :key="c1.categoryId" :class="{cor:currentIndex === index}">
-                        <h3  @mousemove="changeIndex(index)">
-                            <a href="">{{c1.categoryName}}</a>
-                        </h3>
-                        <div class="item-list clearfix">
-                            <div class="subitem">
-                                <dl class="fore" v-for="(c2,index) in c1.categoryChild" :key="c2.categoryId">
-                                    <dt>
-                                        <a href="">{{c2.categoryName}}</a>
-                                    </dt>
-                                    <dd>
-                                        <em  v-for="(c3,index) in c2.categoryChild" :key="c3.categoryId">
-                                            <a href="">{{c3.categoryName}}</a>
-                                        </em>
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div>
+
         </div>
     </div>
 </template>
 
 <script>
 import {mapState} from 'vuex'
+// 引入方式：是把lodash全部的功能函数引入
+// 最好的引入方式：按需加载
+import throttle from 'lodash/throttle'
+
 export default {
     name:'TypeNav',
     data() {
@@ -56,14 +64,59 @@ export default {
         ...mapState('homeStore',['categorylist'])
     },
     methods: {
-        // 鼠标进入修改响应式数据currentIndex属性
-        changeIndex(index){
+        // 鼠标进入修改响应式数据currentIndex属性,es6写法且未加节流
+        /* changeIndex(index){
             // index:鼠标移到哪一个一级分类上的索引
+            // 注册情况（用户慢慢的操作）：鼠标进入，每一个一级分类H3 都会触发鼠标进入事件
+            // 非正常情况（用户操作很快）：本身全部的一级分类都应该触发鼠标进入事件，但是经过测试，只有部分h3触发了
+            // 就是用户的行为过快，导致浏览器反应不过来，如果当前回调函数中有一些大量业务有可能出现卡顿现象
             this.currentIndex = index
-        },
+        }, */
+
+        // 鼠标进入修改响应式数据currentIndex属性,throttle回调函数别用箭头函数，可能出现上下文this的问题
+        changeIndex:throttle(function(index){
+            // index:鼠标移到哪一个一级分类上的索引
+            // 注册情况（用户慢慢的操作）：鼠标进入，每一个一级分类H3 都会触发鼠标进入事件
+            // 非正常情况（用户操作很快）：本身全部的一级分类都应该触发鼠标进入事件，但是经过测试，只有部分h3触发了
+            // 就是用户的行为过快，导致浏览器反应不过来，如果当前回调函数中有一些大量业务有可能出现卡顿现象
+            this.currentIndex = index
+        },50),
+
         // 鼠标移除事件的回调
         resetIndex(){
             this.currentIndex = -1
+        },
+        // 进行路由跳转到 方法
+        goSearch(event){
+            // 最好的解决方案：编程式导航 + 事件的委派
+            // 利用事件的委派存在的一些问题1：点击的一定是a标签 2.如何获取参数【1,2,3】
+            // 点击a标签的时候，才会进行路由的跳转（怎么确定点击的一定是a标签）
+            // 存在的另一个问题，即使你能确定点击的是a标签，如何区分是一级、二级、三级的a标签
+            
+            // 第一个问题：在子节点当中a标签，我加上自定义属性data-categoryName，其余的子节点是没有的
+            let element = event.target;
+            // 获取到当前触发这个事件的节点【h3,a,dt,dl】，需要带有data-categoryname这个节点【一定是a标签】
+            // 节点有一个属性dataset属性，可以获取节点的自定义属性与属性值
+            let {categoryname,category1id,category2id,category3id} = element.dataset
+            // 如果标签身上拥有categoryname一定是a标签
+            if(categoryname){
+                // 整理路由跳转到参数,注意:编程式路由定义了name属性
+                let location = {name:'sousuo'}
+                let query = {categoryName:categoryname}
+                // 一级分类、二级分类、三级分类的a标签
+                if (category1id) {
+                    query.category1Id = category1id
+                }else if (category2id) {
+                    query.category2Id = category2id
+                }else{
+                    query.category3Id = category3id
+                }
+                // 整理完参数
+                location.query =query
+                console.log(query,location);
+                // 路由的跳转
+                this.$router.push(location)
+            }
         }
     },
     // 组件挂载完毕：可以向服务器发请求
@@ -131,7 +184,6 @@ export default {
                         }
 
                         .item-list {
-                            display: none;
                             position: absolute;
                             width: 734px;
                             min-height: 460px;
@@ -184,11 +236,7 @@ export default {
                             }
                         }
 
-                        &:hover {
-                            .item-list {
-                                display: block;
-                            }
-                        }
+
                     }
                     .cor{
                         background: skyblue;
