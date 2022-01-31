@@ -7,10 +7,15 @@
 
 
 
-
 作业:利用过渡动画transiton，封装一个抽屉的效果。
-1)搜索模块中的三级联动与过渡动画
-开发search组件中的typeNav商品分类菜单（过度动画效果）
+1.搜索模块中的三级联动与过渡动画，开发search组件中的typeNav商品分类菜单（过度动画效果）
+过渡动画：前提组件|元素务必要有v-if|v-show指令才可以进行过渡动画
+2.typeNav组件考虑性能（防止api接口重复获取）的话，将派发获取接口请求的action放到APP根组件下的mounted里，这样typeNav只会执行（加载一次）
+3.合并params与query参数
+4.开发home首页当中的ListContainer组件与Floor组件
+但是这里需要知道一件事情，服务器返回的数据（接口），只有商品分类菜单分类数据，对弈ListContainer和Floor组件数据，服务器没有提供。
+mock数据（模拟）：这里面如果你想mock 数据，需要用到一个插件mockjs
+
 
 1.1在home模块当中，使用了一个功能三级联动功能---->[typeNav]
 1.2在search模块当中，也使用三级联动的功能------->[typeNav]
@@ -30,9 +35,6 @@
 2.1开发者工具中可以看见组件的名字
 2.2注册全局组件的时候，可以通过组件实例获取相应组件的名字
 
-
-
-
 3)TypeNav组件业务分析?
 3.1三级联动在home模块正常显示
 3.2三级联动在search一会显示、一会隐藏 ---解决方案：通过一个响应式属性控制三级联动显示与隐藏
@@ -43,18 +45,11 @@
 以后在功的时候，如果出现某一个组件要区分当前在哪一个模块中【home、search】，通过$route路由信息区分
 3.6路由跳转的时候，相应的组件会把重新销毁与创建----【kepp-alive】
 
-
-
-
-
 4)过渡效果
 最早接触的时候:CSS3
 Vue当中也有过渡动画效果---transition内置组件完成
 4.1:注意1,在Vue当中，你可以给 （某一个节点）|（某一个组件）添加过渡动画效果
 但是需要注意，节点|组件务必出现v-if|v-show指令才可以使用。
-
-
-
 
 5)TypeNav三级联动性能优化?
 项目：home切换到search或者search切换到home，你会发现一件事情，组件在频繁的向服务器发请求，
@@ -68,8 +63,6 @@ Vue当中也有过渡动画效果---transition内置组件完成
 因为路由跳转的时候，组件会进行销毁的【home组件的created：在向vuex派发action，因此频繁的获取三级联动的数据】
 只需要发一次请求，获取到三级联动的数据即可，不需要多次。
 最终解决方案：在App.
-
-
 
 5.2:项目性能优化手段有哪些？
 v-if|v-show选择
@@ -112,7 +105,9 @@ mock官网当中这句话的理解：
 第二部：在src文件夹下创建一个文件夹，文件夹mock文件夹。
 
 第三步:准备模拟的数据
-把mock数据需要的图片放置于public文件夹中！
+把mock数据需要的图片放置于public文件夹中！【public文件在打包的时候，会把响应的资源原封不动打包到dist文件夹中】
+必须要格式化一下，别留有空格。
+
 比如:listContainer中的轮播图的数据
 [
    {id:1,imgUrl:'xxxxxxxxx'}, 
@@ -126,8 +121,16 @@ mock官网当中这句话的理解：
 
 
 第五步:通过mock模块模拟出数据
+// 引入mockjs模块(Mock)
+import Mock from 'mockjs'
+//  把JSON数据格式引入进来[json 根本没有暴露，但是可以引入进来]
+// webpack 默认对外暴露的：图片、JSON数据格式
+import bannder from './banner.json'
+import floor from './floor.json'
 
-通过Mock.mock方法进行模拟数据
+// mock数据；第一个参数请求地址   第二个参数：请求数据
+Mock.mock('./banner.json',{code:200,data:bannder})  //大的轮播图数据
+Mock.mock('./floor.json',{code:200,data:floor})     //
 
 
 第六步:回到入口文件，引入serve.js

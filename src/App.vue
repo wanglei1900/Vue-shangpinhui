@@ -6,7 +6,6 @@
     <!-- 在Home、Search显示的，在登录、注册隐藏 -->
     <!-- <Footer v-show="$route.path=='/home'||$route.path=='/search'"></Footer> -->
     <Footer v-show="$route.meta.showFooter"></Footer>
-
   </div>
 </template>
 
@@ -18,7 +17,11 @@ export default {
   components:{
     Header,
     Footer
-  }
+  },
+  mounted() {
+    // 派发一个actions||获取商品分类的三级列表的数据
+    this.$store.dispatch('homeStore/categoryList')
+  },
 }
 </script>
 

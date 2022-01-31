@@ -11,7 +11,10 @@ import VueRouter from 'vue-router'
 import router from './router'
 // 引入Vuex实例仓库store
 import store from './store'
-
+// 引入mockjServer，引入的时候，mockServer.js里的代码自动执行一次
+import '@/mock/mockServer'
+// 引入swiper 样式
+import 'swiper/css/swiper.css'
 
 Vue.config.productionTip = false
 // 使用插件

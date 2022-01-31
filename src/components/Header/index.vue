@@ -80,13 +80,18 @@ export default {
 
     // 5: 路由组件能不能传递props数据?
     // 可以的（三种写法）
-    this.$router.push({
+    /* this.$router.push({
         name:'sousuo',
         params:{searchWord:this.searchWord},
-        query:{key:this.searchWord.toUpperCase()}
-    })
-    console.log('@@@', this.$router);
-
+        // query:{key:this.searchWord.toUpperCase()}
+    }) */
+    // 如果有query参数也带过去
+      let location
+      if(this.$route.query){
+        location = {name:'sousuo', params:{searchWord:this.searchWord}}
+        location.query = this.$route.query
+      }
+        this.$router.push(location)
     }
   },
 };

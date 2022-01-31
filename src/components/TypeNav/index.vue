@@ -124,6 +124,10 @@ export default {
                 }else{
                     query.category3Id = category3id
                 }
+                // 判断，如果路由跳转的时候带有params参数，捎带脚传递过去
+                if(this.$route.params){
+                    location.params = this.$route.params
+                }
                 // 整理完参数
                 location.query =query
                 // console.log(query,location);
@@ -134,8 +138,6 @@ export default {
     },
     // 组件挂载完毕：可以向服务器发请求
     mounted() {
-        // 通知vuex发送请求，获取数据，存储于仓库中
-        this.$store.dispatch('homeStore/categoryList')
         // 当组件挂载完毕，让show的属性变为false
         // 如果不是Home路由组件，将typeNav进行隐藏.[这里要写route而不是router]
         if (this.$route.path !='/home') {
