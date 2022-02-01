@@ -11,3 +11,5 @@ export const reqCategoryList =()=>requests({url:'/product/getBaseCategoryList', 
 
 // 获取轮播图banner(Home首页轮播图的接口)
 export const reqBannerList =()=>mockRequest({url:'/banner', method:'GET'})
+// 获取floor轮播图的数据
+export const reqFloorList = ()=>mockRequest({url:'/floor', method:'GET'})
