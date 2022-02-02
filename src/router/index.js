@@ -56,7 +56,7 @@ export default new VueRouter({
         },
         {    
             name:'sousuo',  //编程式路由使用params传参时必须要要配置name：属性
-            path:'/search/:searchWord?',    //在占位符后面写上一个?来表明可传可不传
+            path:'/search/:keyword?',    //在占位符后面写上一个?来表明可传可不传
             component:Search,
             meta:{showFooter:true},
         },

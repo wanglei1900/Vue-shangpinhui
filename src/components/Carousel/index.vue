@@ -21,6 +21,8 @@ export default {
     watch: {
       // 监听bannerList数据的变化，因为这条数据发生过变化。。。由空数组变为数组里面有四个元素
         carouselList:{
+            // 立即监听，先让watch立即执行一次，这样才能检测到有变化。不然没有变化监听不到，下面回调不执行
+            // 为什么watch监听不到carouselList（因为这个数据是父亲给的，父亲给的时候就是一个对象，从来没有发生变化）
             immediate:true,
             handler(newValue,oldVaule){
             // 现在通过watch监听bannerList属性的属性值变化

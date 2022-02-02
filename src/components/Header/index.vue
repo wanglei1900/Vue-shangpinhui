@@ -36,7 +36,7 @@
             type="text"
             id="autocomplete"
             class="input-error input-xxlarge"
-            v-model="searchWord"
+            v-model="keyword"
           />
           <button class="sui-btn btn-xlarge btn-danger" type="button" @click='toSearch'>
             搜索
@@ -52,7 +52,7 @@ export default {
   name:'',
   data() {
     return {
-      searchWord:'',
+      keyword:'',
     }
   },
   methods: {
@@ -60,20 +60,20 @@ export default {
       // 搜索按钮的回调函数，需要向search路由进行跳转
       // 路由传参 
       // 第一种形式：字符串形式，了解
-      // this.$router.push("/search/" + this.searchWord + "?key=" + this.searchWord.toUpperCase())
+      // this.$router.push("/search/" + this.keyword + "?key=" + this.keyword.toUpperCase())
       // 第二种形式：模板字符串，了解
-      // this.$router.push(`/search/${this.searchWord}?key=${this.searchWord.toUpperCase()}`)
+      // this.$router.push(`/search/${this.keyword}?key=${this.keyword.toUpperCase()}`)
       
       // 第三种形式，对象形式，开发常用,query参数写法
         /* this.$router.push({
           name:'sousuo',
-          params:{searchWord : this.searchWord}   // params传参需要提前在路由url中占位符
+          params:{keyword : this.keyword}   // params传参需要提前在路由url中占位符
         }) */
       // 第三种形式，对象形式，开发常用,query参数写法
       /* this.$router.push({
         // name:'search', //query参数不需要写路由路径的name属性
         path:'search',
-        query:{key:this.searchWord.toUpperCase()}
+        query:{key:this.keyword.toUpperCase()}
       }) */
 
     /* ***************************************************** */
@@ -82,17 +82,23 @@ export default {
     // 可以的（三种写法）
     /* this.$router.push({
         name:'sousuo',
-        params:{searchWord:this.searchWord},
-        // query:{key:this.searchWord.toUpperCase()}
+        params:{keyword:this.keyword},
+        // query:{key:this.keyword.toUpperCase()}
     }) */
     // 如果有query参数也带过去
       let location
       if(this.$route.query){
-        location = {name:'sousuo', params:{searchWord:this.searchWord}}
+        location = {name:'sousuo', params:{keyword:this.keyword}}
         location.query = this.$route.query
       }
         this.$router.push(location)
-    }
+    },
+  },
+  mounted() {
+    // 通过全局事件总线清除关键字
+    this.$bus.$on('clear', ()=>{
+      this.keyword = ''
+    })
   },
 };
 </script>
