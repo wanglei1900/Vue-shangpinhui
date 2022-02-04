@@ -4,12 +4,15 @@ import App from './App.vue'
 import TypeNav from '@/components/TypeNav'
 // 引入全局组件Carousel，为了轮播图复用
 import Carousel from '@/components/Carousel'
-
+// 引入全局组件Pagination,分页器复用
+import Pagination from '@/components/Pagination'
 // 注册全局组件TypeNav
 // Vue.component(【全局组件的名字】，【哪一个组件】)
 Vue.component(TypeNav.name,TypeNav)
 // 注册全局组件Carousel
 Vue.component(Carousel.name,Carousel)
+// 注册全局组件Pagination
+Vue.component(Pagination.name,Pagination)
 
 // 引入Vue-Router
 import VueRouter from 'vue-router'
