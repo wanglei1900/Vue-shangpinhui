@@ -33,3 +33,22 @@ export const reqGetSearchInfo = (params)=>requests({
     method:'POST',
     data:params
 })
+
+// 获取产品详细信息，请求地址：/api/item/{ skuId } ， 请求方式：GET  ，请求参数：
+export const reqGoodsInfo =(skuid)=>requests({
+  url:`/item/${skuid}`,
+  method:'GET'
+})
+// 将产品添加到购物车中（获取更新某一个产品的个数）
+// /api/cart/addToCart/{ skuId }/{ skuNum }
+export const reqAddOrUpdateShopCart=(skuId,skuNum)=>requests({
+  url:`/cart/addToCart/${skuId}/${skuNum}`,
+  method:'POST'
+})
+
+// 获取购物车数据
+// Url:/api/cart/cartList    method：get
+export const reqShopCart=()=>requests({
+    url:'/cart/cartList',
+    method:'GET'
+})

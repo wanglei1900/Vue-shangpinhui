@@ -12,7 +12,6 @@ const actions = {
         if (result.code == 200) {
             commit('GETSEARCHLIST', result.data)
         }
-        console.log(result);
     }
 }
 const mutations = {

@@ -1,12 +1,11 @@
 // 该文件专门用于创建整个应用的路由器
 import VueRouter from 'vue-router'
 
-// 引入各个路由组件
-import Home from '@/pages/Home'
-import Login from '@/pages/Login'
-import Register from '@/pages/Register'
-import Search from '@/pages/Search'
+
 import Vue from 'vue'
+
+// 引入路由信息（单独模块
+import routes from '@/router/routes'
 
 // 先把VueRouter原型对象的push方法，保存一份
 let originPush = VueRouter.prototype.push
@@ -37,33 +36,12 @@ VueRouter.prototype.replace = function(location,resolve,reject){
 
 export default new VueRouter({
     mode:'hash',
-    // 配置路由
-    routes:[
-        {    
-            path:'/home',
-            component:Home,
-            meta:{showFooter:true}
-        },
-        {    
-            path:'/login',
-            component:Login,
-            meta:{showFooter:false}
-        },
-        {    
-            path:'/register',
-            component:Register,
-            meta:{showFooter:false}
-        },
-        {    
-            name:'sousuo',  //编程式路由使用params传参时必须要要配置name：属性
-            path:'/search/:keyword?',    //在占位符后面写上一个?来表明可传可不传
-            component:Search,
-            meta:{showFooter:true},
-        },
-        // 重定向，在项目跑起来的时候，访稳/，立马让他定向到首页
-        {
-            path:'*',
-            redirect:'/home'
-        }
-    ]
+    // 配置路由,kv一致省略v
+    routes,
+    // 滚动行为
+    scrollBehavior (to, from, savedPosition) {
+        // return 期望滚动到哪个的位置
+        // 返回到y=0,滚动条在最上方
+        return { y: 0 }
+    }
 })

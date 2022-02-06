@@ -47,7 +47,10 @@
               <li class="yui3-u-1-5" v-for="(goods, index) in goodsList" :key="goods.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank"><img :src="goods.defaultImg"/></a>
+                    <!-- 在路由跳转的时候切记别忘记代id(params) 参数 -->
+                    <router-link :to="`/detail/${goods.id}`">
+                      <img :src="goods.defaultImg"/>
+                    </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -137,8 +140,6 @@ export default {
     // 再发请求之前，把接口需要传递参数，进行整理（在给服务器发请求之前，把参数整理好，服务器就会返回你查询的数据）
     // Object.assign:ES6新增的语法，合并对象。
     Object.assign(this.searchParams,this.$route.query,this.$route.params)
-    console.log('发请求之前', this.searchParams);
-    console.log(this.$route);
 },
   // 组件挂载完毕执行一次【仅仅执行一次】
   mounted() {
@@ -203,7 +204,6 @@ export default {
     // 直接点击品牌图片 的自定义事件
     tradeMarkInfo(trademark){
       // 整理品牌字段的参数    ID 品牌名称
-      console.log(trademark);
       this.searchParams.trademark = trademark.tmId + ':' + trademark.tmName
       // 再次发请求获取search列表数据进行展示
       this.getData()

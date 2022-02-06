@@ -50,6 +50,7 @@ export default {
           start = this.totalPage - this.continues +1
         }
       }
+      // 返回一个对象，可以返回多个数
         return {start,end}
     }
   },
