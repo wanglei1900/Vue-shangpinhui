@@ -31,7 +31,7 @@
             <span class="sum">{{cart.skuNum * cart.skuPrice}}</span>
           </li>
           <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
+            <a href="#none" class="sindelet" @click="deleteCartById(cart.skuId)">删除</a>
             <br>
             <a href="#none">移到收藏</a>
           </li>
@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import throttle from 'lodash/throttle'
 import {mapGetters} from 'vuex'
   export default {
     name: 'ShopCart',
@@ -72,30 +73,54 @@ import {mapGetters} from 'vuex'
       getData(){
         this.$store.dispatch('shopCartStore/getCartList')
       },
-      // 修改某一个产品的个数
-      handler(type,disNum,cart){
-        // type形参：为了区分三个元素
-        // 目前disNum形参+变化量（1） -变化量（-1）  input最终的个数（并不是变化量）
-        // cart：哪一个产品【身上有skuId】
+      // 修改某一个产品的个数,加入了节流
+      handler: throttle(async function(type,disNum,cart){
+            // type形参：为了区分三个元素
+            // 目前disNum形参+变化量（1） -变化量（-1）  input最终的个数（并不是变化量）
+            // cart：哪一个产品【身上有skuId】
+            // 像服务器发请求，修改数量
+            switch (type) {
+              case "add":
+                disNum =1;
+                break;
+              case "minus":
+                // 判断产品的个数大于1，才可以传递给服务器-1
+                // 如果出现<=1,传递给服务器的个数为0（原封不动）
+                disNum = cart.skuNum>1?-1:0
+                break;
+              case "change":
+                // 用户输入进来的最终量是非法的(带有函数|出现负数)，带给服务器数字零，不变化
+                if (isNaN(disNum)||disNum<1) {
+                  disNum =0
+                }else{
+                  // 属于正常情况（小数，取整），带给服务器变化的量，用户输入进来 - 产品的起始个数
+                  disNum = parseInt(disNum) - cart.skuNum
+                }
+                break;
+              default:
+                break;
+            }
+            // 派发action
+            try {
+              // 代表的是修改成功
+              await this.$store.dispatch('detailStore/addOrUpdateShopCart', {skuId:cart.skuId, skuNum:disNum})
+              // 再一次获取服务器最新的数据进行展示
+              this.getData()
+            } catch (error) {
+              console.log(error);
+            }
+          },1000),
 
-        // 像服务器发请求，修改数量
-        switch (type) {
-          case "add":
-            disNum =1;
-            break;
-          case "minus":
-            // 判断产品的个数大于1，才可以传递给服务器-1
-            // 如果出现<=1,传递给服务器的个数为0（原封不动）
-            disNum = cart.skuNum>1?-1:0
-            break;
-          default:
-            break;
+      // 删除了某个产品的操作，发起actions请求
+      async deleteCartById(skuId){
+        try {
+          // 如果删除成功，再次发请求获取新的数据进行展示
+          await this.$store.dispatch('shopCartStore/deleteCartListBySkuId',skuId)
+          this.getData()
+        } catch (error) {
+          console.log(error.message);
         }
-
-        // 派发action
-        this.$store.dispatch('detailStore/addOrUpdateShopCart', {skuId:cart.skuId, skuNum:disNum})
-        this.getData()
-      }
+      },
     },
     computed: {
       ...mapGetters('shopCartStore', ['cartList']),
@@ -124,7 +149,9 @@ import {mapGetters} from 'vuex'
       isAllChecked(){
         // 遍历水族里面的原理，只要全部元素isChecked属性都为1，
         return this.cartInfoList.every((element)=>element.isChecked ==1)
-      }
+      },
+
+ 
     },
     mounted(){
       // 派发获取购物车列表的actions

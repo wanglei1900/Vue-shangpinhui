@@ -52,3 +52,10 @@ export const reqShopCart=()=>requests({
     url:'/cart/cartList',
     method:'GET'
 })
+
+// 删除购物车产品的接口
+// URL:/api/cart/deleteCart/{skuId}    method：DELETE
+export const reqDeleteCartById=(skuId)=>requests({
+    url:`cart/deleteCart/${skuId}`,
+    method:'DELETE'
+})

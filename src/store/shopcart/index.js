@@ -1,4 +1,4 @@
-import {reqShopCart} from '@/api'
+import {reqShopCart, reqDeleteCartById} from '@/api'
 
 const state={
     cartList:[]
@@ -11,8 +11,12 @@ const actions ={
             commit('GETCARTLIST', result.data)
         }
     },
-    addOrUpdateShopCart(){
-        
+    // 删除购物车产品
+    async deleteCartListBySkuId({commit}, skuId){
+        // 删除，不用返回data，不用三连环
+        let result = await reqDeleteCartById(skuId)
+        if (result.code ==200) return 'ok' 
+        else return new Promise.reject(new Error('faile'))
     }
 }
 const mutations={
