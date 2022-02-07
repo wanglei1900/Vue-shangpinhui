@@ -11,22 +11,21 @@
         <div class="cart-th6">操作</div>
       </div>
       <div class="cart-body">
-        <ul :check="cart.isChecked==1" class="cart-list" v-for="(cart,index) in cartInfoList" :key="cart.id">
+        <ul class="cart-list" v-for="(cart,index) in cartInfoList" :key="cart.id">
           <li class="cart-list-con1">
-            <input type="checkbox" name="chk_list">
+            <input :checked="cart.isChecked==1" type="checkbox" name="chk_list">
           </li>
           <li class="cart-list-con2">
             <img :src="cart.imgUrl">
             <div class="item-msg">{{cart.skuName}}</div>
           </li>
-
           <li class="cart-list-con4">
             <span class="price">{{cart.skuPrice}}</span>
           </li>
           <li class="cart-list-con5">
-            <a href="javascript:void(0)" class="mins">-</a>
-            <input autocomplete="off" type="text" :value="cart.skuNum" minnum="1" class="itxt">
-            <a href="javascript:void(0)" class="plus">+</a>
+            <a href="javascript:void(0)" class="mins" @click="handler('minus', -1, cart)">-</a>
+            <input @change="handler('change', $event.target.value*1, cart)" autocomplete="off" type="text" :value="cart.skuNum" minnum="1" class="itxt">
+            <a href="javascript:void(0)" class="plus" @click="handler('add', +1, cart)">+</a>
           </li>
           <li class="cart-list-con6">
             <span class="sum">{{cart.skuNum * cart.skuPrice}}</span>
@@ -41,7 +40,7 @@
     </div>
     <div class="cart-tool">
       <div class="select-all">
-        <input class="chooseAll" type="checkbox">
+        <input class="chooseAll" type="checkbox" :checked="isAllChecked">
         <span>全选</span>
       </div>
       <div class="option">
@@ -72,6 +71,30 @@ import {mapGetters} from 'vuex'
       // 获取个人购物车的数据
       getData(){
         this.$store.dispatch('shopCartStore/getCartList')
+      },
+      // 修改某一个产品的个数
+      handler(type,disNum,cart){
+        // type形参：为了区分三个元素
+        // 目前disNum形参+变化量（1） -变化量（-1）  input最终的个数（并不是变化量）
+        // cart：哪一个产品【身上有skuId】
+
+        // 像服务器发请求，修改数量
+        switch (type) {
+          case "add":
+            disNum =1;
+            break;
+          case "minus":
+            // 判断产品的个数大于1，才可以传递给服务器-1
+            // 如果出现<=1,传递给服务器的个数为0（原封不动）
+            disNum = cart.skuNum>1?-1:0
+            break;
+          default:
+            break;
+        }
+
+        // 派发action
+        this.$store.dispatch('detailStore/addOrUpdateShopCart', {skuId:cart.skuId, skuNum:disNum})
+        this.getData()
       }
     },
     computed: {
@@ -92,9 +115,15 @@ import {mapGetters} from 'vuex'
            return prev + cur.skuPrice*cur.skuNum
         },0) */
 
+        // 利用filter过滤在利用reduce累加
         return this.cartList.cartInfoList.filter((element,index,arr)=>element.isChecked ===1).reduce((prev,cur,arr)=>(prev + cur.skuPrice*cur.skuNum),0)
 
         
+      },
+        // 判断所有单选框确认后勾选，【全部的产品都勾选中才勾选】
+      isAllChecked(){
+        // 遍历水族里面的原理，只要全部元素isChecked属性都为1，
+        return this.cartInfoList.every((element)=>element.isChecked ==1)
       }
     },
     mounted(){
