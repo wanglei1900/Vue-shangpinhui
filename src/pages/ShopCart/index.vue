@@ -13,7 +13,7 @@
       <div class="cart-body">
         <ul class="cart-list" v-for="(cart,index) in cartInfoList" :key="cart.id">
           <li class="cart-list-con1">
-            <input :checked="cart.isChecked==1" type="checkbox" name="chk_list">
+            <input @change="changeCheck(cart,$event)" :checked="cart.isChecked==1" type="checkbox" name="chk_list">
           </li>
           <li class="cart-list-con2">
             <img :src="cart.imgUrl">
@@ -44,7 +44,7 @@
         <span>全选</span>
       </div>
       <div class="option">
-        <a href="#none">删除选中的商品</a>
+        <a href="#none" @click="deleteAllCheckedCart">删除选中的商品</a>
         <a href="#none">移到我的关注</a>
         <a href="#none">清除下柜商品</a>
       </div>
@@ -121,6 +121,30 @@ import {mapGetters} from 'vuex'
           console.log(error.message);
         }
       },
+      // 改变商品状态，并发起actions请求
+      async changeCheck(cart,event){
+        try {
+          // 更改checked状态，0代表取消选中，1代表选中
+          // console.log(event.target.checked);   目前对象的checked，true传1，false传0
+          let isChecked = event.target.checked ?1:0
+          await this.$store.dispatch('shopCartStore/changeCheckStatus', {skuId:cart.skuId,isChecked})
+          this.getData()
+        } catch (error) {
+          console.log(error.message);
+        }
+      },
+      // 删除全部选中的商品
+      // 这个回调函数咱们没办法收到有用的参数
+      async deleteAllCheckedCart(){
+        try {
+          // 派发一个action,需等到所有选中物品删除（即action里的promise全部成功）
+          await this.$store.dispatch('shopCartStore/deleteAllCheckedCart')
+          // 再发请求，跟新购物车数据
+          this.getData()
+        } catch (error) {
+          console.log(error.message);
+        }
+      }
     },
     computed: {
       ...mapGetters('shopCartStore', ['cartList']),
@@ -150,6 +174,7 @@ import {mapGetters} from 'vuex'
         // 遍历水族里面的原理，只要全部元素isChecked属性都为1，
         return this.cartInfoList.every((element)=>element.isChecked ==1)
       },
+
 
  
     },

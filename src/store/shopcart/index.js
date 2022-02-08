@@ -1,4 +1,4 @@
-import {reqShopCart, reqDeleteCartById} from '@/api'
+import {reqShopCart, reqDeleteCartById, reqCheckStatus} from '@/api'
 
 const state={
     cartList:[]
@@ -16,7 +16,26 @@ const actions ={
         // 删除，不用返回data，不用三连环
         let result = await reqDeleteCartById(skuId)
         if (result.code ==200) return 'ok' 
-        else return new Promise.reject(new Error('faile'))
+        else return Promise.reject(new Error('faile'))
+    },
+    // 改变商品状态
+    async changeCheckStatus({commit},{skuId,isChecked}){
+        let result = await reqCheckStatus(skuId,isChecked)
+        if (result.code ==200) return 'ok'
+        else return Promise.reject(new Error('FAILE'))
+    },
+    deleteAllCheckedCart({dispatch,getters}){
+        // context：小仓库，commit【提交mutationa修改state】
+        // 获取购物车车中全部的产品（是一个数组）
+        let PromiseAll = []
+        getters.cartList.cartInfoList.filter((element)=>element.isChecked ==1).forEach(element => {
+            let promise = dispatch('deleteCartListBySkuId', element.skuId)
+            PromiseAll.push(promise)
+        });
+        
+        // 只要全部的p1|p2... 都成功,返回结果即为成功
+        // 如果有一个失败，返回即为失败结果
+        return Promise.all(PromiseAll)
     }
 }
 const mutations={
