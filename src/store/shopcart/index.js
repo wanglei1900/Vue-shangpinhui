@@ -60,7 +60,7 @@ const mutations={
 }
 const getters={
     cartList(state){
-        return state.cartList[0] ||{}
+        return state.cartList[0] ||[]
     }
 }
 
