@@ -40,7 +40,7 @@
     </div>
     <div class="cart-tool">
       <div class="select-all">
-        <input class="chooseAll" type="checkbox" :checked="isAllChecked">
+        <input class="chooseAll" type="checkbox" :checked="isAllChecked&&cartInfoList.length>0" @change="updateAllCartChecked($event)">
         <span>全选</span>
       </div>
       <div class="option">
@@ -126,7 +126,7 @@ import {mapGetters} from 'vuex'
         try {
           // 更改checked状态，0代表取消选中，1代表选中
           // console.log(event.target.checked);   目前对象的checked，true传1，false传0
-          let isChecked = event.target.checked ?1:0
+          let isChecked = event.target.checked ?"1":"0"
           await this.$store.dispatch('shopCartStore/changeCheckStatus', {skuId:cart.skuId,isChecked})
           this.getData()
         } catch (error) {
@@ -140,6 +140,19 @@ import {mapGetters} from 'vuex'
           // 派发一个action,需等到所有选中物品删除（即action里的promise全部成功）
           await this.$store.dispatch('shopCartStore/deleteAllCheckedCart')
           // 再发请求，跟新购物车数据
+          this.getData()
+        } catch (error) {
+          console.log(error.message);
+        }
+      },
+      // 勾中时，所有变为确认。取消时
+      async updateAllCartChecked(event){
+        // 遍历所有商品的状态，如果没有勾选改为勾选，如果勾选则不改。
+        try {
+          let isChecked = event.target.checked ? "1":"0"
+          console.log(isChecked);
+          // 发情actions，更改商品品名状态
+          await this.$store.dispatch('shopCartStore/updateAllCartIsChecked',isChecked)
           this.getData()
         } catch (error) {
           console.log(error.message);
@@ -165,7 +178,9 @@ import {mapGetters} from 'vuex'
         },0) */
 
         // 利用filter过滤在利用reduce累加
-        return this.cartList.cartInfoList.filter((element,index,arr)=>element.isChecked ===1).reduce((prev,cur,arr)=>(prev + cur.skuPrice*cur.skuNum),0)
+        if (this.cartList.cartInfoList) {
+          return this.cartList.cartInfoList.filter((element,index,arr)=>element.isChecked ===1).reduce((prev,cur,arr)=>(prev + cur.skuPrice*cur.skuNum),0)
+        }
 
         
       },
