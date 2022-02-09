@@ -14,26 +14,26 @@
       <div class="content">
         <label>验证码:</label>
         <input v-model="code" type="text" placeholder="请输入验证码">
-        <button @ style="width:100px;height:40px">获取验证码</button>
+        <button @click="sendPhone" style="width:100px;height:40px">获取验证码</button>
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="content">
         <label>登录密码:</label>
-        <input type="text" placeholder="请输入你的登录密码">
+        <input v-model="password" type="password" placeholder="请输入你的登录密码">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="content">
         <label>确认密码:</label>
-        <input type="text" placeholder="请输入确认密码">
+        <input v-model="password1" type="password" placeholder="请输入确认密码">
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="controls">
-        <input name="m1" type="checkbox">
+        <input :checked="agree" name="m1" type="checkbox">
         <span>同意协议并注册《尚品汇用户协议》</span>
         <span class="error-msg">错误提示信息</span>
       </div>
       <div class="btn">
-        <button>完成注册</button>
+        <button @click="userRegister">完成注册</button>
       </div>
     </div>
 
@@ -65,6 +65,43 @@
         phone:'',
         // 验证码
         code:'',
+        // 密码
+        password:'',
+        // 确认密码
+        password1:'',
+        // 是否同意(测试 默认勾选)
+        agree:true
+      }
+    },
+    methods: {
+      // 发送手机号码，获取验证码
+      async sendPhone(){
+        try {
+          // 简单判断一下,phone至少要有数据
+          const {phone} = this
+          phone && await this.$store.dispatch('userStore/getCode', phone)
+          console.log(this.$store.state);
+          // 为了测试图省事，将code属性直接变为验证码
+          this.code = this.$store.state.userStore.code
+        } catch (error) {
+          alert(error.message)
+        }
+        
+      },
+      // 注册账号
+      async userRegister(){
+        try {
+          // 如果成功---路由跳转
+          const {phone,code,password,password1} = this;
+          // 电话，验证码已填写，且两次密码相等
+          if ((phone&&code&&password==password1) && await this.$store.dispatch('userStore/checkRegister',{phone, password,code}) ) {
+            // 路由跳转
+            this.$router.push({name:'login'})
+          }
+        } catch (error) {
+          // 如果失败
+          alert(error.message)
+        }
       }
     },
   }

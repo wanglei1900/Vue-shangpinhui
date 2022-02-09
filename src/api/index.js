@@ -14,19 +14,6 @@ export const reqBannerList =()=>mockRequest({url:'/banner', method:'GET'})
 // 获取floor轮播图的数据
 export const reqFloorList = ()=>mockRequest({url:'/floor', method:'GET'})
 // 获取搜索模块接口，请求地址：/api/list， 请求方式：POST  参数：需要代参数
-/* 
-{
-  "category3Id": "61",
-  "categoryName": "手机",
-  "keyword": "小米",
-  "order": "1:desc",
-  "pageNo": 1,
-  "pageSize": 10,
-  "props": ["1:1700-2799:价格", "2:6.65-6.74英寸:屏幕尺寸"],
-  "trademark": "4:小米"
-}
- */
-
 // 当前这个接口(获取搜索模块的数据)，给服务器传递参数params，至少是一个空对象
 export const reqGetSearchInfo = (params)=>requests({
     url:'/list',
@@ -69,9 +56,17 @@ export const reqCheckStatus = (skuId,isChecked)=>requests({
 
 // 获取验证码
 // /api/user/passport/sendCode/{phone}    GET
-export const reqGetCode = (phone)=>requests({
+export const reqCode = (phone)=>requests({
   url:`user/passport/sendCode/${phone}`,
   method:'GET'
+})
+
+// 注册账号
+// /api/user/passport/register    POST
+export const reqRegister = (params)=>requests({
+  url:`user/passport/register`,
+  data:params,
+  method:'POST'
 })
 
 

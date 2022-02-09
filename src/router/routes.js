@@ -14,7 +14,8 @@ export default [
         component:Home,
         meta:{showFooter:true}
     },
-    {    
+    {   
+        name:'login', 
         path:'/login',
         component:Login,
         meta:{showFooter:false}
