@@ -177,9 +177,12 @@ import {mapGetters} from 'vuex'
            return prev + cur.skuPrice*cur.skuNum
         },0) */
 
-        // 利用filter过滤在利用reduce累加
+        // 判断购物车列表清单是否清空（也可以判断父元素this.cartList.length!==0）
         if (this.cartList.cartInfoList) {
+          // 利用filter过滤在利用reduce累加
           return this.cartList.cartInfoList.filter((element,index,arr)=>element.isChecked ===1).reduce((prev,cur,arr)=>(prev + cur.skuPrice*cur.skuNum),0)
+        }else{
+          return 0
         }
 
         

@@ -67,4 +67,11 @@ export const reqCheckStatus = (skuId,isChecked)=>requests({
   method:'GET'
 })
 
+// 获取验证码
+// /api/user/passport/sendCode/{phone}    GET
+export const reqGetCode = (phone)=>requests({
+  url:`user/passport/sendCode/${phone}`,
+  method:'GET'
+})
+
 
