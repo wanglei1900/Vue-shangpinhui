@@ -84,5 +84,10 @@ export const reqUserInfo = ()=>requests({
   method:'GET'
 })
 
-
+// 退出登录
+// /api/user/passport/logout   GET
+export const reQuitRegister=()=>requests({
+  url:'user/passport/logout',
+  method:'GET'
+})
 

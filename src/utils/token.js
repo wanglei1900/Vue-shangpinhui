@@ -6,3 +6,7 @@ export const setToken=(token)=>{
 export const getToken=()=>{
     return localStorage.getItem('TOKEN')
 }
+// 退出登录清除token
+export const removeToken=()=>{
+    localStorage.removeItem('TOKEN')
+}

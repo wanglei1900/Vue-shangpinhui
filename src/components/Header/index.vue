@@ -12,7 +12,7 @@
           </p>
           <p v-else>
             <a>{{userName}}</a>
-            <a class="register">退出登录</a>
+            <a class="register" @click="logout">退出登录</a>
           </p>
         </div>
         <div class="typeList">
@@ -97,11 +97,25 @@ export default {
       }
         this.$router.push(location)
     },
+    // 退出登录
+    async logout(){
+      try {
+        // 登出成功回调
+        // 1.需要发请求，通知富翁诶器退出登录【清楚一些数据：token】
+        // 2.清楚项目中的数据【userInfo/token】
+        await this.$store.dispatch('userStore/quitRegister')
+        // localStorage.removeItem('TOKEN')   选择在mutations里清除
+        // 路由跳转到首页
+        this.$router.push('/home')
+      } catch (error) {
+        alert(error.message)
+      }
+    }
   },
   computed: {
     // 仓库捞取用户名信息
     userName(){
-      return this.$store.state.userStore.userInfo.name
+       return this.$store.state.userStore.userInfo.name
     }
   },
   mounted() {

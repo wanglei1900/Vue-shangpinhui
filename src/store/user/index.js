@@ -1,5 +1,5 @@
-import {reqCode, reqRegister,reqUserLogin,reqUserInfo} from '@/api'
-import {setToken,getToken} from "@/utils/token"
+import {reqCode, reqRegister,reqUserLogin,reqUserInfo,reQuitRegister} from '@/api'
+import {setToken,getToken,removeToken} from "@/utils/token"
 
 const state = {
     // 验证码
@@ -45,12 +45,24 @@ const actions = {
        }
     },
     // 获取用户信息（token）
-    async userInfo({commit},token){
-        let result = await reqUserInfo(token)
+    async userInfo({commit}){
+        let result = await reqUserInfo()
         if (result.code ==200) {
             commit('USERINFO', result.data)
             return 'ok'
+        }else{
+            return Promise.reject(new Error('faile'))
         }
+    },
+    // 退出登录
+    async quitRegister({commit}){
+        // 向服务器发送请求，清楚token
+        let result = await reQuitRegister()
+        if (result.code ==200){
+            commit('QUITRESISTER')
+            return 'ok'
+        }
+        else return Promise.reject(new Error('faile'))
     }
 }
 const mutations = {
@@ -62,6 +74,13 @@ const mutations = {
     },
     USERINFO(state,userInfo){
         state.userInfo = userInfo
+    },
+    QUITRESISTER(state){
+        // 帮仓库中相关用户信息清空
+        state.token = ''
+        state.userInfo =''
+        // 本地存储token 信息清空
+        removeToken()
     }
 }
 const getters = {}
