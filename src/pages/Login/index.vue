@@ -14,23 +14,23 @@
           </ul>
 
           <div class="content">
-            <form action="##">
+            <form>
               <div class="input-text clearFix">
                 <span></span>
-                <input type="text" placeholder="邮箱/用户名/手机号">
+                <input v-model="phone" type="text" placeholder="邮箱/用户名/手机号">
               </div>
               <div class="input-text clearFix">
                 <span class="pwd"></span>
-                <input type="text" placeholder="请输入密码">
+                <input v-model="password" type="password" placeholder="请输入密码">
               </div>
               <div class="setting clearFix">
                 <label class="checkbox inline">
-                  <input name="m1" type="checkbox" value="2" checked="">
+                  <input name="m1" type="checkbox" value="2" :checked="agree">
                   自动登录
                 </label>
                 <span class="forget">忘记密码？</span>
               </div>
-              <button class="btn">登&nbsp;&nbsp;录</button>
+              <button @click.prevent="clickLogin" class="btn">登&nbsp;&nbsp;录</button>
             </form>
 
             <div class="call clearFix">
@@ -68,6 +68,35 @@
 <script>
   export default {
     name: 'Login',
+    data() {
+      return {
+        // 账号
+        phone:'',
+        // 密码
+        password:'',
+        // 开发中默认勾选
+        agree:true
+      }
+    },
+    methods: {
+      // 用户点击登录
+      async clickLogin(){
+        try {
+            const {phone,password} = this
+            // 发起actions，通知vuex仓库用户登录
+            // 简单判断，电话和密码不为空
+            if ((phone&&password) && await this.$store.dispatch('userStore/userLogin', {phone,password})) {
+
+              // 登录成功后跳转到home首页
+              this.$router.push({name:'home'})
+            }else{
+              alert('用户名或者密码不能为空')
+            }
+        } catch (error) {
+          alert(error.message)
+        }
+      }
+    },
   }
 </script>
 

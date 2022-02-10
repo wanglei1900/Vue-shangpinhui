@@ -69,4 +69,20 @@ export const reqRegister = (params)=>requests({
   method:'POST'
 })
 
+// 登录账号
+// /api/user/passport/login     POST   phone,password
+export const reqUserLogin = (params)=>requests({
+  url:'user/passport/login',
+  data:params,
+  method:'POST'
+})
+
+// 获取用户信息，需要用token向服务器要用户信息
+// api/user/passport/auth/getUserInfo     GET
+export const reqUserInfo = ()=>requests({
+  url:'user/passport/auth/getUserInfo',
+  method:'GET'
+})
+
+
 

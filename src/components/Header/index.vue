@@ -5,10 +5,14 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <p v-if="!userName">
             <span>请</span>
             <router-link to="/login">登录</router-link>
             <router-link  to="/register" class="register">免费注册</router-link >
+          </p>
+          <p v-else>
+            <a>{{userName}}</a>
+            <a class="register">退出登录</a>
           </p>
         </div>
         <div class="typeList">
@@ -93,6 +97,12 @@ export default {
       }
         this.$router.push(location)
     },
+  },
+  computed: {
+    // 仓库捞取用户名信息
+    userName(){
+      return this.$store.state.userStore.userInfo.name
+    }
   },
   mounted() {
     // 通过全局事件总线清除关键字

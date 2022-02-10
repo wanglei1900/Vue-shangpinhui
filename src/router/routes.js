@@ -9,7 +9,8 @@ import ShopCart from '@/pages/ShopCart'
 
 // 路由配置的信息
 export default [
-    {    
+    {   
+        name:'home',
         path:'/home',
         component:Home,
         meta:{showFooter:true}

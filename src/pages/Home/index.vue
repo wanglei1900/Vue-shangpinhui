@@ -29,6 +29,8 @@ export default {
   },
   mounted() {
     this.$store.dispatch('homeStore/getFloorList')
+    // 首页获取用户信息
+    this.$store.dispatch('userStore/userInfo',this.$store.state.userStore.token)
   },
 }
 </script>
