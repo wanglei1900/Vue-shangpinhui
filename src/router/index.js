@@ -61,7 +61,7 @@ router.beforeEach(async (to, from, next) => {
     let name  = store.state.userStore.userInfo.name
     // 已经登录
     if(token){
-        if (to.path=='/login') {
+        if (to.path=='/login'||to.path=='/register') {
             // 用户已经登录了还想去login，不能去,停留在首页
             next('/home')
         }else{
