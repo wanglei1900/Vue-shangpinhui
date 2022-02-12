@@ -13,7 +13,6 @@ const actions ={
         let result = await reqGoodsInfo(skuid)
         if (result.code == 200) {
             commit('GETGOODSINFO', result.data)
-            console.log(result);
         }
     },
     // 将产品添加到购物车中

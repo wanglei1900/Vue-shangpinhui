@@ -91,3 +91,31 @@ export const reQuitRegister=()=>requests({
   method:'GET'
 })
 
+// 获取用户地址
+//  /api/user/userAddress/auth/findUserAddressList   GET
+export const reqUserAddress=()=>requests({
+  url:'user/userAddress/auth/findUserAddressList',
+  method:'GET'
+})
+
+// 获取订单页
+// /api/order/auth/trade    GET
+export const reqOrderInfo=()=>requests({
+  url:'order/auth/trade',
+  method:'GET'
+})
+
+// 提交订单
+// /api/order/auth/submitOrder?tradeNo={tradeNo}     POST  注意参数
+export const reqSubmitOrder=(tradeNo,data)=>requests({
+  url:`order/auth/submitOrder?tradeNo=${tradeNo}`,
+  method:'POST',
+  data
+})
+
+// 获取订单支付信息
+// /api/payment/weixin/createNative/{orderId}      GET    注意参数
+export const reqOrderPayment=(orderId)=>requests({
+  url:`payment/weixin/createNative/${orderId} `,
+  method:'GET'
+})

@@ -50,7 +50,7 @@
       </div>
       <div class="money-box">
         <div class="chosed">已选择
-          <span>0</span>件商品</div>
+          <span>{{cartInfoList.length}}</span>件商品</div>
         <div class="sumprice">
           <em>总价（不含运费） ：</em>
           <i class="summoney">{{totalPrice}}</i>
@@ -184,8 +184,6 @@ import {mapGetters} from 'vuex'
         }else{
           return 0
         }
-
-        
       },
         // 判断所有单选框确认后勾选，【全部的产品都勾选中才勾选】
       isAllChecked(){
