@@ -1,4 +1,4 @@
-// 引入各个路由组件
+// 引入一级路由组件
 import Home from '@/pages/Home'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
@@ -8,7 +8,11 @@ import AddCartSuccess from '@/pages/AddCartSuccess'
 import ShopCart from '@/pages/ShopCart'
 import Trade from '@/pages/Trade'
 import Pay from '@/pages/Pay'
-
+import PaySuccess from '@/pages/PaySuccess'
+import Center from '@/pages/Center'
+// 引入二级路由组件
+import MyOrder from '@/pages/Center/MyOrder'
+import GroupOrder from '@/pages/Center/GroupOrder'
 // 路由配置的信息
 export default [
     {   
@@ -62,6 +66,33 @@ export default [
         path:'/pay',
         component:Pay,
         meta:{showFooter:true}
+    },
+    {   
+        name:'paysuccess',
+        path:'/paysuccess',
+        component:PaySuccess,
+        meta:{showFooter:true}
+    },
+    {   
+        name:'center',
+        path:'/center',
+        component:Center,
+        meta:{showFooter:true},
+        // 二级路由组件
+        children:[
+            {
+                path:'myorder',     //二级路由不能加路径/
+                component:MyOrder
+            },
+            {
+                path:'grouporder',     //二级路由不能加路径/
+                component:GroupOrder
+            },
+            {
+                path:'/center',      //重定向的时候需要加路径/
+                redirect:'/center/myorder'
+            }
+        ]
     },
     // 重定向，在项目跑起来的时候，访稳/，立马让他定向到首页
     {

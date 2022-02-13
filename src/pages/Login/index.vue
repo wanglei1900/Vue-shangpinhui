@@ -86,9 +86,9 @@
             // 发起actions，通知vuex仓库用户登录
             // 简单判断，电话和密码不为空
             if ((phone&&password) && await this.$store.dispatch('userStore/userLogin', {phone,password})) {
-
-              // 登录成功后跳转到home首页
-              this.$router.push({name:'home'})
+              // 登录的路由组件：看路由当中是否包含query参数，有： 跳到query参数指定路由，没有：跳到home
+              let toPath = this.$route.query.redirect||"/home"
+              this.$router.push(toPath)
             }else{
               alert('用户名或者密码不能为空')
             }

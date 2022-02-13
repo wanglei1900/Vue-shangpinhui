@@ -84,11 +84,17 @@
 </template>
 
 <script>
+// 引入二维码包
+import QRCode from 'qrcode'
   export default {
     name: 'Pay',
     data() {
       return {
-        orderInfo:{}
+        orderInfo:{},
+        // 定时器开关
+        timer:null,
+        // 支付的状态码，支付凭证
+        code:''
       }
     },
     computed: {
@@ -114,23 +120,72 @@
            }
       },
       // 弹出框
-      open() {
-          this.$alert('img :src="this.orderInfo.codeUrl"', 'HTML 片段', {
+      async open() {
+        // 利用QRcode生成二维码（url地址） 
+        let url = await QRCode.toDataURL(this.orderInfo.codeUrl)
+        // elementui的messagebox弹出框展示支付页面，注意路径反引号并且斜杠前留空
+        this.$alert(`<img src="${url}" />`, '微信支付', {
+          // 是否将 message 属性作为 HTML 片段处理
           dangerouslyUseHTMLString: true,
           // 中间布局
           center:true,
-          // 是否显示取消按钮
-          showCancelButton:true,
-          // 取消按钮的文本内容
-          cancelButtonText:'支付遇见问题',
-          // 确认按钮的文本内容
-          confirmButtonText:'已支付成功',
-          // 是否显示右上角关闭按钮
+          // 关闭右上角关闭按钮,
           showClose:false,
+          roundButton:true,
+          // 显示取消按钮，确认按钮是默认打开的
+          showCancelButton:true,
+          // 取消按钮的文本
+          cancelButtonText:'请联系管理员',
+          // 确认按钮的文本
+          confirmButtonText:'已经支付',
+          // 关闭前的回调
+          beforeClose:(action, instance, done)=>{
+              // action:区分取消||确定按钮
+              // instance：当前组件实例
+              // done：关闭弹出框的方法 
+              if (action=='cancel') {      // 取消按钮的回调
+                alert('请联系管理人员')
+                // 清除定时器
+                clearInterval(this.timer)
+                this.timer=null
+                // 回调的第三个参数，关闭弹出窗
+                done()
+              }else{     //确认按钮的回调（出现没有自动跳转的界面）
+                // 根据支付状态码判断是否真的付了
+                if (this.code==200) {     //code为组件data里保存的状态码（凭证）
+                  // q 清除定时器，关闭弹出窗，路由跳转支付成功的界面
+                  clearInterval(this.timer)
+                  this.timer=null
+                  done()
+                  this.$router.push({name:'paysuccess'})
+                }
+              }
+          }
         });
+        
+        // 你需要知道支付成功||失败
+        // 支付成功，路由的跳转。如果失败，提示信息
+        // ↓定时器没有，开启一个新的定时器
+        if (!this.timer) {
+           this.timer = setInterval(async() => {
+              // 发请求获取用户支付的状态 
+              let result =  await this.$API.reqPayStatus(this.orderId)
+              if (result.code ==200) {
+                // 清除定时器
+                clearInterval(this.timer)
+                this.timer=null
+                // 保存支付成功的状态码
+                this.code =result.code     //code为组件data里保存的状态码（凭证）
+                // 关闭弹出窗
+                this.$msgbox.close()
+                //跳转下一级路由 
+                this.$router.push({name:'paysuccess'})
+              }
+            }, 1000);
+        }
+
       }
     }
-    
   }
 </script>
 
