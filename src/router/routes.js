@@ -1,64 +1,55 @@
 // 引入一级路由组件
-import Home from '@/pages/Home'
-import Login from '@/pages/Login'
-import Register from '@/pages/Register'
-import Search from '@/pages/Search'
-import Detail from '@/pages/Detail'
-import AddCartSuccess from '@/pages/AddCartSuccess'
-import ShopCart from '@/pages/ShopCart'
-import Trade from '@/pages/Trade'
-import Pay from '@/pages/Pay'
-import PaySuccess from '@/pages/PaySuccess'
-import Center from '@/pages/Center'
 // 引入二级路由组件
-import MyOrder from '@/pages/Center/MyOrder'
-import GroupOrder from '@/pages/Center/GroupOrder'
+// 路由懒加载无需额外引入路由组件
+// 当打包构建应用时，JavaScript 包会变得非常大，影响页面加载。如果我们能把不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应组件，这样就更加高效了。
+// const Foo = () => import('./Foo.vue')
+
 // 路由配置的信息
 export default [
     {   
         name:'home',
         path:'/home',
-        component:Home,
+        component:()=>import('@/pages/Home'),
         meta:{showFooter:true}
     },
     {   
         name:'login', 
         path:'/login',
-        component:Login,
+        component:()=>import('@/pages/Login'),
         meta:{showFooter:false}
     },
     {    
         path:'/register',
-        component:Register,
+        component:()=>import('@/pages/Register'),
         meta:{showFooter:false}
     },
     {    
         name:'sousuo',  //编程式路由使用params传参时必须要要配置name：属性
         path:'/search/:keyword?',    //在占位符后面写上一个?来表明可传可不传
-        component:Search,
+        component:()=>import('@/pages/Search'),
         meta:{showFooter:true},
     },
     {
         path:'/detail/:skuid',
-        component:Detail,
+        component:()=>import('@/pages/Detail'),
         meta:{showFooter:true}
     },
     {
         name:'addcartsuccess',
         path:'/addcartsuccess',
-        meta:{showFooter:true},
-        component:AddCartSuccess
+        component:()=>import('@/pages/AddCartSuccess'),
+        meta:{showFooter:true}
     },
     {
         name:'shopcart',
         path:'/shopcart',
-        component:ShopCart,
+        component:()=>import('@/pages/ShopCart'),
         meta:{showFooter:true}
     },
     {   
         name:'trade',
         path:'/trade',
-        component:Trade,
+        component:()=>import('@/pages/Trade'),
         meta:{showFooter:true},
         // 路由独享守卫
         beforeEnter: (to, from, next) => {
@@ -74,7 +65,7 @@ export default [
     {   
         name:'pay',
         path:'/pay',
-        component:Pay,
+        component:()=>import('@/pages/Pay'),
         meta:{showFooter:true},
         // 路由独享守卫
         beforeEnter: (to, from, next) => {
@@ -89,23 +80,23 @@ export default [
     {   
         name:'paysuccess',
         path:'/paysuccess',
-        component:PaySuccess,
+        component:()=>import('@/pages/PaySuccess'),
         meta:{showFooter:true}
     },
     {   
         name:'center',
         path:'/center',
-        component:Center,
+        component:()=>import('@/pages/Center'),
         meta:{showFooter:true},
         // 二级路由组件
         children:[
             {
                 path:'myorder',     //二级路由不能加路径/
-                component:MyOrder
+                component:()=>import('@/pages/Center/MyOrder'),
             },
             {
                 path:'grouporder',     //二级路由不能加路径/
-                component:GroupOrder
+                component:()=>import('@/pages/Center/GroupOrder'),
             },
             {
                 path:'/center',      //重定向的时候需要加路径/
