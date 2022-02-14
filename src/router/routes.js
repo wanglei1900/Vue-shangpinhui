@@ -59,13 +59,32 @@ export default [
         name:'trade',
         path:'/trade',
         component:Trade,
-        meta:{showFooter:true}
+        meta:{showFooter:true},
+        // 路由独享守卫
+        beforeEnter: (to, from, next) => {
+            // 去交易页面，必须从购物车而来
+            if (from.path=='/shopcart') {
+                next()
+            }else{
+                // 中断当前的导航。如果浏览器的 URL 改变了 (可能是用户手动或者浏览器后退按钮)，那么 URL 地址会重置到 from 路由对应的地址
+                next(false)
+            }
+        }
     },
     {   
         name:'pay',
         path:'/pay',
         component:Pay,
-        meta:{showFooter:true}
+        meta:{showFooter:true},
+        // 路由独享守卫
+        beforeEnter: (to, from, next) => {
+            // ...
+            if (from.path =='/trade') {
+                next()
+            }else{
+                next(false)
+            }
+        }
     },
     {   
         name:'paysuccess',
