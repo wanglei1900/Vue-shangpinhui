@@ -1,4 +1,6 @@
 module.exports = {
+    // 处理map文件
+    productionSourceMap:false,
     // 关闭eslint
     lintOnSave:false,
     // 代理跨域

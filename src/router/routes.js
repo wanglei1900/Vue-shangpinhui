@@ -104,6 +104,42 @@ export default [
             }
         ]
     },
+    {
+        path:'/communication',
+        component:()=>import('@/pages/Communication/Communication'),
+        children:[
+            {
+                path:'event',
+                component:()=>import('@/pages/Communication/EventTest/EventTest'),
+                meta:{showFooter:false}
+            },
+            {
+                path:'model',
+                component:()=>import('@/pages/Communication/ModelTest/ModelTest'),
+                meta:{showFooter:false}
+            },
+            {
+                path:'sync',
+                component:()=>import('@/pages/Communication/SyncTest/SyncTest'),
+                meta:{showFooter:false}
+            },
+            {
+                path:'attrs-listeners',
+                component:()=>import('@/pages/Communication/AttrsListenersTest/AttrsListenersTest'),
+                meta:{showFooter:false}
+            },
+            {
+                path:'children-parent',
+                component:()=>import('@/pages/Communication/ChildrenParentTest/ChildrenParentTest'),
+                meta:{showFooter:false}
+            },
+            {
+                path:'scope-slot',
+                component:()=>import('@/pages/Communication/ScopeSlotTest/ScopeSlotTest'),
+                meta:{showFooter:false}
+            }
+        ]
+    },
     // 重定向，在项目跑起来的时候，访稳/，立马让他定向到首页
     {
         path:'*',
