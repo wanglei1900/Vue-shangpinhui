@@ -6,22 +6,15 @@
 </template>
 
 <script>
+import myMixin from '@/pages/Communication/ChildrenParentTest/myMixin/myMixin'
 export default {
   name: 'Son',
+  mixins:[myMixin],
   data () {
     return {
       money: 30000
     }
   },
 
-  methods: {
-    tinghua(){
-        console.log('我是小明，我听爸爸的话');
-    },
-    geiQian(money){
-       this.money-=money;
-       this.$parent.money+=money;
-    }
-  }
 }
 </script>
